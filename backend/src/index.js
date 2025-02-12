@@ -10,8 +10,8 @@ import {connectDB} from "./lib/bd.js";
 import {app, server} from "./lib/socket.js"
 
 import authRoutes from "./routes/auth.route.js";
-import messageRoutes from "./routes/message.route.js"
-
+import messageRoutes from "./routes/message.route.js";
+import friendRoutes from "./routes/friend.route.js";
 
 
 dotenv.config();
@@ -34,6 +34,7 @@ app.use(
 
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/api/friend", friendRoutes);
 
 if(process.env.NODE_ENV){
     app.use(express.static(path.join(__dirname,"../fontend/dist")));

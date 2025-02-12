@@ -12,6 +12,7 @@ import { useEffect } from "react"
 import { useThemeStore } from "./store/useThemeStore"
 
 import {Loader} from "lucide-react"
+import FriendPage from "./pages/FriendPage"
 
   const App = () => {
     const {authUser, checkAuth, isCheckingAuth, onlineUsers} = useAuthStore();
@@ -38,6 +39,8 @@ import {Loader} from "lucide-react"
           <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/" />} />
           <Route path="/settings" element={<SettingPage />} />
           <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
+          <Route path="/friend" element={authUser ? <FriendPage /> : <Navigate to="/home" />} />
+
         </Routes>
       </div>
     )

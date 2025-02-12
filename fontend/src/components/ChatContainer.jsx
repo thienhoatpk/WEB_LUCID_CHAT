@@ -7,7 +7,8 @@ import MessageSkeleton from "./skeletons/MessageSkeleton";
 import { useAuthStore } from "../store/useAuthStore";
 import { formatMessageTime } from "../lib/utils";
 
-const ChatContainer = () => {
+const 
+ChatContainer = () => {
   const {
     messages,
     getMessages,
@@ -69,12 +70,12 @@ const ChatContainer = () => {
                 {formatMessageTime(message.createdAt)}
               </time>
             </div>
-            <div className="chat-bubble flex flex-col">
+            <div className={`${message.text!="" ? "bg-primary text-primary-content chat-bubble flex flex-col" : ""}`} >
               {message.image && (
                 <img
                   src={message.image}
                   alt="Attachment"
-                  className="sm:max-w-[200px] rounded-md mb-2"
+                  className="w-[120px]"
                 />
               )}
               {message.text && <p>{message.text}</p>}

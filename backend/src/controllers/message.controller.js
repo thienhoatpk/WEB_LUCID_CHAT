@@ -2,6 +2,8 @@ import User from "../models/user.model.js";
 import Message from "../models/message.model.js"
 import cloudinary from "../lib/cloudinary.js";
 import { getReceiverId, io } from "../lib/socket.js";
+import { protectRoute } from '../middleware/auth.middleware.js';
+
 
 export const getUserForSidebar = async(req, res) => {
     try {
