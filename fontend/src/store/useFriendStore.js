@@ -5,10 +5,13 @@ import { useAuthStore } from "./useAuthStore";
 
 
 export const useFriendStore = create((set, get) => ({
+    type : 1,
     friends: [],
     requestsFriend: [],
     invitatesFriend: [],
     isFriendsLoading: false,
+
+    setType: (newType) => set({ type: newType }),
   
     getFriends: async () => {
       set({ isFriendsLoading: true });
@@ -17,12 +20,55 @@ export const useFriendStore = create((set, get) => ({
         set({ friends: res.data });
         
       } catch (error) {
+        console.log("Loi get Friend in useFriendStore")
+
+    } finally {
+        set({ isFriendsLoading: false });
+      }
+    },
+    getRequsetFriends: async () => {
+      set({ isFriendsLoading: true });
+      try {
+        const res = await axiosInstance.get("/friend/get-requests");
+        set({ requestsFriend: res.data });
+        
+      } catch (error) {
         console.log("Loi get Friemd in useFriendStore")
 
     } finally {
         set({ isFriendsLoading: false });
       }
     },
+    getInvitateFriends: async () => {
+      set({ isFriendsLoading: true });
+      try {
+        const res = await axiosInstance.get("/friend/get-invitates");
+        set({ invitatesFriend: res.data });
+        
+      } catch (error) {
+        console.log("Loi get Friemd in useFriendStore")
+
+    } finally {
+        set({ isFriendsLoading: false });
+      }
+    },
+
+    removeFriend: async () => {
+      set({ isFriendsLoading: true });
+      try {
+        const res = await axiosInstance.get("/friend/remove-friend");
+        // set({ invitatesFriend: res.data });
+        
+      } catch (error) {
+        console.log("Error remove Friend in useFriendStore")
+
+    } finally {
+        set({ isFriendsLoading: false });
+      }
+    }
+
+    // setType: (type) => set({type : type}),
+
     
     
     // getMessages: async (userId) => {

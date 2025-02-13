@@ -35,7 +35,14 @@ export const getRequests = async(req, res) => {
     try {
         const myUser = req.user;
         const requestFriends = await myUser.requestFriend;
-        res.status(200).json(requestFriends);
+        const mapRequestFriend = [];
+        for(const idRequestFriend of requestFriends){
+            const myRequestFriend = await User.findById(idRequestFriend)
+            if(myRequestFriend){
+                mapRequestFriend.push(myRequestFriend);
+            }
+        }
+        res.status(200).json(mapRequestFriend);
         
     } catch (error) {
         console.log("Error get Requests Friend in Controller", error.message);
@@ -47,7 +54,14 @@ export const getInvitates = async(req, res) => {
     try {
         const myUser = req.user;
         const invitateFriends = await myUser.invitateFriend;
-        res.status(200).json(invitateFriends);
+        const mapInvitates = [];
+        for(const idInvitateFriend of invitateFriends){
+            const myInvitateFriend = await User.findById(idInvitateFriend);
+            if(myInvitateFriend){
+                mapInvitates.push(myInvitateFriend);
+            }
+        }
+        res.status(200).json(mapInvitates);
         
     } catch (error) {
         console.log("Error get Invitate Friend in Controller", error.message);
@@ -70,6 +84,27 @@ export const getFriends = async(req, res) => {
         
     } catch (error) {
         console.log("Error get Friend in Controller", error.message);
+        res.status(500).json({msg: "Internal Server Error"});
+    }
+};
+
+export const removeFriend = async(req, res) => {
+    try {
+        const myUser = req.user;
+        const { idRemove } = req.body;
+        const myFriend = await User.findById(idRemove);
+        console.log(idRemove)
+        if(!myUser.friends.includes(idRemove)){
+            return res.status(500).json({ msg: "This user is not ot your friend" });
+        }
+        else{
+            myUser.friends.pull(idRemove);
+            myUser.save();
+            myFriend.save();
+            return res.status(201).json({ msg: "Remove friend by ID: "+idRemove});
+        }  
+    } catch (error) {
+        console.log("Error remove friend in Controller", error.message);
         res.status(500).json({msg: "Internal Server Error"});
     }
 };
