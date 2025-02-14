@@ -4,8 +4,8 @@ export const sendRequest = async(req, res) => {
     try {
     const sender = req.user
     const {idReceiver} = req.body;
+    console.log(idReceiver)
     const receiver = await User.findById(idReceiver);
-
     if(!receiver) {
         return res.status(500).json({ msg: "Receiver is not exists" });
     }
@@ -93,13 +93,13 @@ export const removeFriend = async(req, res) => {
         const myUser = req.user;
         const { idRemove } = req.body;
         const myFriend = await User.findById(idRemove);
-        console.log(idRemove)
         if(!myUser.friends.includes(idRemove)){
-            return res.status(500).json({ msg: "This user is not ot your friend" });
+            return res.status(500).json({ msg: "This user is not your friend" });
         }
         else{
             myUser.friends.pull(idRemove);
             myUser.save();
+            myFriend.friends.pull(myFriend._id);
             myFriend.save();
             return res.status(201).json({ msg: "Remove friend by ID: "+idRemove});
         }  

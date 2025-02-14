@@ -18,6 +18,9 @@ const messageSchema = new mongoose.Schema(
     image: {
       type: String,
     },
+    isRevoke: { 
+      type: Boolean, default: false 
+    },
   },
   { timestamps: true }
 );

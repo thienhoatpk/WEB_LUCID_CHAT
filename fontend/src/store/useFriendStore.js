@@ -53,14 +53,15 @@ export const useFriendStore = create((set, get) => ({
       }
     },
 
-    removeFriend: async () => {
+    removeFriend: async (idFriend) => {
+      console.log("first")
       set({ isFriendsLoading: true });
       try {
-        const res = await axiosInstance.get("/friend/remove-friend");
+        const res = await axiosInstance.post("/friend/remove-friend", idFriend);
         // set({ invitatesFriend: res.data });
         
       } catch (error) {
-        console.log("Error remove Friend in useFriendStore")
+        console.log("Error remove Friend in useFriendStore ",error)
 
     } finally {
         set({ isFriendsLoading: false });
