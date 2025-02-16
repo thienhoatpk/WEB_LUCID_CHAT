@@ -1,5 +1,5 @@
 import express from 'express';
-import {sendRequest, getRequests, getInvitates, getFriends,removeFriend ,acceptFriend} from "../controllers/friend.controller.js"
+import {sendRequest, getRequests, getInvitates, getFriends,removeFriend ,acceptFriend, cancleRequest} from "../controllers/friend.controller.js"
 import { protectRoute } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
@@ -14,7 +14,9 @@ router.get("/get-invitates", protectRoute, getInvitates);
 
 router.post("/remove-friend", protectRoute, removeFriend);
 
-router.post("/accept", protectRoute, acceptFriend);
+router.post("/cancle-request", protectRoute, cancleRequest);
+
+router.post("/accept-friend", protectRoute, acceptFriend);
 
 
 

@@ -7,15 +7,18 @@ import { useChatStore } from "../store/useChatStore"
 import { Navigate } from "react-router-dom";
 
 const FriendContainer = () => {
-  const { type,
+  const { 
+    type,
     friends, getFriends,
     getRequsetFriends, requestsFriend,
     getInvitateFriends, invitatesFriend,
     removeFriend,
+    cancleRequest,
+    acceptInvitation,
   } = useFriendStore();
   const { setSelectedUser, selectedUser } = useChatStore();
 
-  const list = type === 1 ? friends : (type === 2 ? requestsFriend : invitatesFriend);
+  let list = type === 1 ? friends : (type === 2 ? requestsFriend : invitatesFriend);
 
   const memoizedGetFriends = useCallback(getFriends, []);
   const memoizedGetRequestFriends = useCallback(getRequsetFriends, []);
@@ -31,6 +34,18 @@ const FriendContainer = () => {
   useEffect(() => {
     memoizedGetInvitateFriends();
   }, [memoizedGetInvitateFriends]);
+
+  const handleClick = async (id) => {
+    if (type === 1) {
+      await removeFriend({ idRemove: id });
+    } else if (type === 2) {
+      await cancleRequest({ idCancle: id });
+    } else {
+      await acceptInvitation({ idAccept: id });
+      list = list.filter(user => user._id !== id)
+    }
+  };
+  
   return (
     <div className='mt-12'>
       <div className="font-bold p-2 w-full text-xl mt-4">{list.length} {type===1 ? "Friends" : (type===2) ? "Requests" :"Invitates" }</div>
@@ -42,17 +57,17 @@ const FriendContainer = () => {
           >
             <img
               className="w-24 h-24 rounded-full border-4 border-white shadow-md"
-              src={user.profilePic}
+              src={user.profilePi ? user.profilePic : "image.jpg"}
               alt="User Avatar"
             />
             <h2 className="text-xl font-semibold text-gray-800">{user.fullName}</h2>
             {/* <p className="text-sm text-gray-500 text-center">@{user.username}</p> */}
             <div>
               <button
-                onClick={() => removeFriend()}
+                onClick={() => handleClick(user._id)}
                 className="ml-5 h-10 w-4/5 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg shadow hover:from-blue-600 hover:to-blue-700 transition-all duration-300"
               >
-                {type === 1 ? "Remove" : "Cancle Request"}
+                {type === 1 ? "Remove" : (type === 2) ? "Cancle Request" : "Accept"}
               </button>
               {selectedUser ? <Navigate to="/" /> : <> </>}
               <button
