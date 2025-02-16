@@ -21,7 +21,10 @@ const messageSchema = new mongoose.Schema(
     isDelete :{
       type: Boolean,
       default: false
-    }
+    },
+    isRevoke: { 
+      type: Boolean, default: false 
+    },
   },
   { timestamps: true }
 );

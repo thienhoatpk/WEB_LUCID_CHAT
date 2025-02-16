@@ -69,6 +69,42 @@ export const sendMessage = async(req, res) => {
         res.status(500).json({msg: "Internal Server Error"})
     }
 }
+
 export const deleteMessage=async (req,res) =>{
   
 }
+
+
+export const revokeMessage = async (req, res) => {
+  try {
+      const { messageId } = req.params;
+      const userId = req.user._id;
+
+      // Tìm tin nhắn
+      const message = await Message.findById(messageId);
+      if (!message) {
+          return res.status(404).json({ msg: "Message not found" });
+      }
+
+      // Kiểm tra quyền thu hồi (chỉ người gửi mới có thể thu hồi)
+      if (message.senderId.toString() !== userId.toString()) {
+          return res.status(403).json({ msg: "You can only revoke your own messages" });
+      }
+
+      // Cập nhật trạng thái thu hồi
+      message.isRevoked = true;
+      await message.save();
+
+      // Gửi sự kiện socket để cập nhật UI
+      const receiverSocketId = getReceiverId(message.receiverId);
+      if (receiverSocketId) {
+          io.to(receiverSocketId).emit("messageRevoked", { messageId });
+      }
+
+      res.status(200).json({ msg: "Message revoked successfully" });
+  } catch (error) {
+      console.log("Error in revokeMessage controller", error.message);
+      res.status(500).json({ msg: "Internal Server Error" });
+  }
+};
+
