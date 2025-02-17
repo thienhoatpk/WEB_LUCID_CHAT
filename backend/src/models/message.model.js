@@ -18,6 +18,10 @@ const messageSchema = new mongoose.Schema(
     image: {
       type: String,
     },
+    isDelete :{
+      type: Boolean,
+      default: false
+    },
     isRevoke: { 
       type: Boolean, default: false 
     },

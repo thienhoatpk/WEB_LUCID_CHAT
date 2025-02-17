@@ -70,6 +70,11 @@ export const sendMessage = async(req, res) => {
     }
 }
 
+export const deleteMessage=async (req,res) =>{
+  
+}
+
+
 export const revokeMessage = async (req, res) => {
   try {
       const { messageId } = req.params;
@@ -102,3 +107,4 @@ export const revokeMessage = async (req, res) => {
       res.status(500).json({ msg: "Internal Server Error" });
   }
 };
+
