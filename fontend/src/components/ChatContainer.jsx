@@ -75,7 +75,7 @@ ChatContainer = () => {
                 <img
                   src={message.image}
                   alt="Attachment"
-                  className="w-[120px]"
+                  className="w-[200px] rounded-lg"
                 />
               )}
               {message.text && <p>{message.text}</p>}

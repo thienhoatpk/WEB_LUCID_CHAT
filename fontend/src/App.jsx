@@ -11,7 +11,6 @@ import { useAuthStore } from "./store/useAuthStore"
 import { useEffect } from "react"
 import { useThemeStore } from "./store/useThemeStore"
 
-import {Loader} from "lucide-react"
 import FriendPage from "./pages/FriendPage"
 
   const App = () => {
@@ -23,12 +22,12 @@ import FriendPage from "./pages/FriendPage"
       checkAuth()
     },[checkAuth]);
     
-    if (isCheckingAuth && !authUser){
-      return(
-      <div className="flex items-center justify-center h-screen">
-        <Loader className="size-10 animate-spin"/>
-      </div>)
-    }
+    // if (isCheckingAuth && !authUser){
+    //   return(
+    //   <div className="flex items-center justify-center h-screen">
+    //     <Loader className="size-10 animate-spin"/>
+    //   </div>)
+    // }
 
     return (
       <div data-theme={theme}>

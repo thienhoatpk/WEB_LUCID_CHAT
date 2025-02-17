@@ -17,6 +17,9 @@ export const sendRequest = async(req, res) => {
     if(sender.requestFriend.includes(receiver._id)) {
         return res.status(500).json({ msg: "You sent requset before" });
     }
+    if(sender.friends.includes(receiver._id)) {
+        return res.status(500).json({ msg: "This user is your Friend" });
+    }
     sender.requestFriend.push(receiver._id);
     sender.save();
 
@@ -97,11 +100,11 @@ export const removeFriend = async(req, res) => {
             return res.status(500).json({ msg: "This user is not your friend" });
         }
         else{
-            myUser.friends.pull(idRemove);
-            myUser.save();
-            myFriend.friends.pull(myFriend._id);
-            myFriend.save();
-            return res.status(201).json({ msg: "Remove friend by ID: "+idRemove});
+            myUser.friends = myUser.friends.filter(id => id.toString() !== idRemove);
+            myFriend.friends = myFriend.friends.filter(id => id.toString() !== myUser._id.toString());
+            await myUser.save();
+            await myFriend.save();
+            return res.status(200).json({ msg: "Remove friend by ID: "+idRemove, user: myFriend});
         }  
     } catch (error) {
         console.log("Error remove friend in Controller", error.message);
@@ -148,7 +151,7 @@ export const acceptFriend = async(req, res) => {
         sender.save();
         myUser.save();
 
-        res.status(201).json({msg: "Accepted"})
+        res.status(201).json({msg: "Accepted id: "+idAccept, user: sender})
     } catch (error) {
         return res.status(500).json({ msg: "Accepted Fail" });
     }

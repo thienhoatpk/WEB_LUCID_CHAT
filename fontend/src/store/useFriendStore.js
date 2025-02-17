@@ -1,8 +1,6 @@
 import { create } from "zustand";
 import toast from "react-hot-toast";
 import { axiosInstance } from "../lib/axios";
-import { useAuthStore } from "./useAuthStore";
-
 
 export const useFriendStore = create((set, get) => ({
   type: 1,
@@ -18,153 +16,92 @@ export const useFriendStore = create((set, get) => ({
     try {
       const res = await axiosInstance.get("/friend/friends");
       set({ friends: res.data });
-
     } catch (error) {
-      console.log("Loi get Friend in useFriendStore")
-
+      console.log("Lỗi khi lấy danh sách bạn bè:", error);
     } finally {
       set({ isFriendsLoading: false });
     }
   },
+
   getRequsetFriends: async () => {
     set({ isFriendsLoading: true });
     try {
       const res = await axiosInstance.get("/friend/get-requests");
       set({ requestsFriend: res.data });
-
     } catch (error) {
-      console.log("Loi get Friemd in useFriendStore")
-
+      console.log("Lỗi khi lấy danh sách yêu cầu kết bạn:", error);
     } finally {
       set({ isFriendsLoading: false });
     }
   },
+
   getInvitateFriends: async () => {
     set({ isFriendsLoading: true });
     try {
       const res = await axiosInstance.get("/friend/get-invitates");
       set({ invitatesFriend: res.data });
-
     } catch (error) {
-      console.log("Loi get Friemd in useFriendStore")
-
+      console.log("Lỗi khi lấy danh sách lời mời kết bạn:", error);
     } finally {
       set({ isFriendsLoading: false });
     }
   },
 
-  removeFriend: async (idFriend) => {
+  removeFriend: async (idUser) => {
     set({ isFriendsLoading: true });
     try {
-      const res = await axiosInstance.post("/friend/remove-friend", idFriend);
+      const res = await axiosInstance.post("/friend/remove-friend", { idRemove: idUser });
 
-      if (res.status === 201) {
-        console.log("Friend removed successfully:", res.data);
+      if (res.status === 200) {
+        console.log("Đã xóa bạn bè thành công:", res.data);
         set((state) => ({
-          friends: state.friends.filter(friend => friend._id !== idFriend),
+          friends: state.friends.filter(friend => friend._id !== idUser),
         }));
-      } else {
-        console.log("Unexpected response:", res);
       }
-
     } catch (error) {
-      console.log("Error remove Friend in useFriendStore ", error)
-
+      console.log("Lỗi khi xóa bạn bè:", error);
     } finally {
       set({ isFriendsLoading: false });
     }
   },
-  cancleRequest: async (idCancle) => {
+
+  cancleRequest: async (idUser) => {
     set({ isFriendsLoading: true });
     try {
-      const res = await axiosInstance.post("/friend/cancle-request", idCancle);
+      const res = await axiosInstance.post("/friend/cancle-request", { idCancle : idUser });
 
       if (res.status === 201) {
-        console.log("Cancle successfully:", res.data);
-
+        console.log("Đã hủy yêu cầu kết bạn:", res.data);
         set((state) => ({
-          requestsFriend: state.requestsFriend.filter(friend => friend._id !== idFriend),
+          requestsFriend: state.requestsFriend.filter(friend => friend._id !== idUser),
         }));
-      } else {
-        console.log("Unexpected response:", res);
       }
-
     } catch (error) {
-      console.log("Error cancle Friend in useFriendStore ", error)
-
+      console.log("Lỗi khi hủy yêu cầu kết bạn:", error);
     } finally {
       set({ isFriendsLoading: false });
     }
   },
 
-  acceptInvitation: async (idAccept) => {
-
+  acceptInvitation: async (idUser) => {
     set({ isFriendsLoading: true });
     try {
-      const res = await axiosInstance.post("/friend/accept-friend", idAccept);
-
+      const res = await axiosInstance.post("/friend/accept-friend", { idAccept: idUser});
+      console.log(
+        res.data
+      )
       if (res.status === 201) {
-        
-        invitatesFriend: invitatesFriend.filter(user => user._id !== idAccept)
-      
-        console.log("Đã xóa lời mời kết bạn");
+        console.log("Đã chấp nhận lời mời kết bạn:", res.data);
+        set((state) => ({
+          invitatesFriend: state.invitatesFriend.filter(user => user._id !== idUser),
+          
+          friends: [...state.friends, res.data.user],
+        }));
       }
-
     } catch (error) {
-      console.log("Error accept Friend in useFriendStore ", error)
-
+      console.log("Lỗi khi chấp nhận lời mời kết bạn:", error);
     } finally {
       set({ isFriendsLoading: false });
     }
   },
-
-
-  // setType: (type) => set({type : type}),
-
-
-
-  // getMessages: async (userId) => {
-  //   set({ isMessagesLoading: true });
-  //   try {
-  //     const res = await axiosInstance.get(`/messages/${userId}`);
-  //     set({ messages: res.data });
-  //   } catch (error) {
-  //     toast.error(error.response.data.message);
-  //   } finally {
-  //     set({ isMessagesLoading: false });
-  //   }
-  // },
-
-  // sendMessage: async (messageData) => {
-  //   const { selectedUser, messages } = get();
-  //   try {
-  //     const res = await axiosInstance.post(`/messages/send/${selectedUser._id}`, messageData);
-  //     set({ messages: [...messages, res.data] });
-  //   } catch (error) {
-  //     toast.error(error.response.data.message);
-  //   }
-  // },
-
-  // subscribeToMessages: () => {
-  //   const { selectedUser } = get();
-  //   if (!selectedUser) return;
-
-  //   const socket = useAuthStore.getState().socket;
-
-  //   socket.on("newMessage", (newMessage) => {
-  //     const isMessageSentFromSelectedUser = newMessage.senderId === selectedUser._id;
-  //     if (!isMessageSentFromSelectedUser) return;
-
-  //     set({
-  //       messages: [...get().messages, newMessage],
-  //     });
-  //   });
-  // },
-
-  // unsubscribeFromMessages: () => {
-  //   const socket = useAuthStore.getState().socket;
-  //   socket.off("newMessage");
-  // },
-
-  // setSelectedUser: (selectedUser) => set({ selectedUser }),
 }));
