@@ -12,12 +12,13 @@ export const useAuthStore = create((set, get) => ({
   isUpdatingProfile: false,
   isCheckingAuth: true,
   onlineUsers: [],
+  setOnlineUsers: (users) => set({ onlineUsers: users }),
   socket: null,
+
 
   checkAuth: async () => {
     try {
       const res = await axiosInstance.get("/auth/check");
-
       set({ authUser: res.data });
       get().connectSocket();
     } catch (error) {
@@ -82,23 +83,28 @@ export const useAuthStore = create((set, get) => ({
   },
 
   connectSocket: () => {
-    const { authUser } = get();
-    if (!authUser || get().socket?.connected) return;
+    const { authUser, socket } = get();
+    console.log("Current socket:", socket);
 
-    const socket = io(BASE_URL, {
-      query: {
-        userId: authUser._id,
-      },
-    });
-    socket.connect();
+    if (!authUser) {
+      get().disconnectSocket();
+      return;
+    }
 
-    set({ socket: socket });
+    if (socket == null) {
+      console.log("Creating new socket...");
+      const newSocket = io(BASE_URL, {
+        query: { userId: authUser._id },
+      });
 
-    socket.on("getOnlineUsers", (userId) => {
-      set({onlineUsers: userId});
-    })
-
+      set({ socket: newSocket });
+      newSocket.on("getOnlineUsers", (userId) => {
+        set({ onlineUsers: userId });
+      });
+    }
   },
+
+
   disconnectSocket: () => {
     if (get().socket?.connected) get().socket.disconnect();
   },

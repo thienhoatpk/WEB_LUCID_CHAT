@@ -54,7 +54,7 @@ export const login = async(req, res) => {
             return res.status(400).json({msg: "Login is fail"}) 
 
         generateToken(user._id,res);
-            res.status(201).json({
+            res.status(200).json({
                 _id: user._id,
                 fullName: user.fullName,
                 email: user.email,

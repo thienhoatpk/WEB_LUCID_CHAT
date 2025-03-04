@@ -10,8 +10,8 @@ const io = new Server(server, {
   },
 });
 
-const userSocketMap = {}; // Stores userId -> socket.id mappings
-const notifications = {}; // Stores userId -> notifications array
+const userSocketMap = {}; // Lưu userId -> socket.id
+const notifications = {}; // Lưu userId -> danh sách thông báo chưa đọc
 
 export function getReceiverId(userId) {
   return userSocketMap[userId];
@@ -19,47 +19,25 @@ export function getReceiverId(userId) {
 
 io.on("connection", (socket) => {
   console.log("🔗 New connection:", socket.id);
-
+  
   const userId = socket.handshake.query.userId;
-
+  console.log("idUSER "+userId)
   if (userId) {
     if (userSocketMap[userId]) {
       console.log(`🔄 Replacing old socket for user: ${userId}`);
     }
     userSocketMap[userId] = socket.id;
+   
+   
+    console.log(userSocketMap)
 
-    // Send stored notifications to the user on reconnect
-    if (notifications[userId]) {
-      notifications[userId].forEach((notif) => {
-        io.to(socket.id).emit("receiveNotification", notif);
-      });
-      notifications[userId] = []; // Clear after sending
-    }
+   
   }
+ 
+  
 
-  // Send updated online users list
   io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
-  // Handle sending a notification
-  socket.on("sendNotification", ({ receiverId, message }) => {
-    const receiverSocketId = userSocketMap[receiverId];
-
-    const notification = {
-      message,
-      time: new Date().toLocaleTimeString(),
-    };
-
-    if (receiverSocketId) {
-      // Send notification in real-time if the user is online
-      io.to(receiverSocketId).emit("receiveNotification", notification);
-    } else {
-      // Store notification for later if the user is offline
-      if (!notifications[receiverId]) {
-        notifications[receiverId] = [];
-      }
-      notifications[receiverId].push(notification);
-    }
-  });
 
   socket.on("disconnect", () => {
     console.log("❌ Disconnected:", socket.id);
@@ -67,9 +45,9 @@ io.on("connection", (socket) => {
     if (userId && userSocketMap[userId] === socket.id) {
       delete userSocketMap[userId];
     }
-
     io.emit("getOnlineUsers", Object.keys(userSocketMap));
   });
 });
+
 
 export { app, server, io };

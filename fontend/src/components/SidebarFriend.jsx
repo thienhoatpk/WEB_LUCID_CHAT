@@ -5,7 +5,7 @@ export const SidebarFriend = () => {
   const { setType, type } = useFriendStore(); 
 
   return (
-    <div className="flex h-screen bg-gray-100 mt-16 w-1/5">
+    <div className="flex h-screen bg-gray-100 w-1/5">
       <nav className="w-full">
         <button 
         
