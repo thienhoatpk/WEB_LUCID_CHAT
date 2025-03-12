@@ -13,6 +13,7 @@ import authRoutes from "./routes/auth.route.js";
 import messageRoutes from "./routes/message.route.js";
 import friendRoutes from "./routes/friend.route.js";
 import notifyRoutes from "./routes/notify.route.js";
+import postRoutes from"./routes/post.route.js";
 
 dotenv.config();
 const upload = multer();
@@ -36,6 +37,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/friend", friendRoutes);
 app.use("/api/notify", notifyRoutes);
+app.use("/api/post", postRoutes)
 
 if(process.env.NODE_ENV){
     app.use(express.static(path.join(__dirname,"../fontend/dist")));

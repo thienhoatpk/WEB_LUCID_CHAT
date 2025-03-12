@@ -1,15 +1,19 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Image, Send } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
+import { usePostStore } from "../store/usePostStore";
 
 const PostInput = ({ onPost }) => {
-  const [content, setContent] = useState("");
-  const [images, setImages] = useState([]); // Dùng mảng để lưu nhiều ảnh
-  const inputRef = useRef(null);
+  const { createPost } = usePostStore();
+  const [content, setContent] = useState(""); // Lưu nội dung nhập
+  const [images, setImages] = useState([]);
   const { authUser } = useAuthStore();
 
+  // Xử lý đăng bài
   const handlePost = () => {
-    if (!content.trim()) return;
+    console.log(content)
+    console.log(images)
+    if (!content.trim() && images.length === 0) return;
 
     onPost({
       id: Date.now(),
@@ -21,21 +25,32 @@ const PostInput = ({ onPost }) => {
       createdAt: new Date().toISOString(),
     });
 
-    setContent("");
-    setImages([]);
-    if (inputRef.current) {
-      inputRef.current.innerText = ""; // Xóa nội dung nhập
-    }
+    setContent(""); 
+    setImages([]); 
   };
 
-  const handleChange = (e) => {
-    setContent(e.target.innerText);
+  // Xử lý thay đổi nội dung
+  const handleContentChange = (e) => {
+    setContent(e.target.value); // Cập nhật state ngay khi nhập
   };
 
-  const handleImageChange = (e) => {
-    const files = e.target.files;
-    const newImages = Array.from(files).map(file => URL.createObjectURL(file));
-    setImages(prevImages => [...prevImages, ...newImages]); // Thêm ảnh vào danh sách
+  // Xử lý thêm ảnh dưới dạng Base64
+  const handleImageChange = async (e) => {
+    const files = Array.from(e.target.files);
+
+    if (files.length === 0) return;
+
+    const base64Images = await Promise.all(
+      files.map((file) => {
+        return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = () => resolve(reader.result);
+        });
+      })
+    );
+
+    setImages((prevImages) => [...prevImages, ...base64Images]);
   };
 
   return (
@@ -47,15 +62,14 @@ const PostInput = ({ onPost }) => {
           alt="Avatar"
           className="w-12 h-12 rounded-full"
         />
-        <div
-          ref={inputRef}
-          contentEditable
-          onInput={handleChange}
+        <input
+          value={content}
+          onChange={handleContentChange} // Cập nhật state ngay khi nhập
           placeholder="Bạn đang nghĩ gì?"
           className="flex-1 focus:outline-none p-4 bg-gray-700 text-white rounded-lg border-b-2 border-gray-600"
           style={{
-            minHeight: "60px",
-            maxHeight: "250px",
+            minHeight: "50px",
+            maxHeight: "50px",
             overflowY: "auto",
             wordWrap: "break-word",
             whiteSpace: "pre-wrap",
@@ -63,7 +77,7 @@ const PostInput = ({ onPost }) => {
         />
       </div>
 
-      {/* Hiển thị ảnh (nếu có) */}
+      {/* Hiển thị ảnh */}
       {images.length > 0 && (
         <div className="mt-4 flex gap-2 overflow-x-auto">
           {images.map((image, index) => (
@@ -95,16 +109,21 @@ const PostInput = ({ onPost }) => {
           className="hidden"
           id="fileInput"
         />
-        <label htmlFor="fileInput" className="flex items-center gap-2 text-blue-400 hover:text-blue-500 cursor-pointer transition-all">
+        <label
+          htmlFor="fileInput"
+          className="flex items-center gap-2 text-blue-400 hover:text-blue-500 cursor-pointer transition-all"
+        >
           <Image className="w-5 h-5" />
           Ảnh
         </label>
 
         <button
           onClick={handlePost}
-          disabled={!content.trim()}
+          disabled={!content.trim() && images.length === 0}
           className={`px-5 py-2 rounded-lg flex items-center gap-2 transition-all ${
-            content.trim() ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-gray-600 text-gray-400 cursor-not-allowed"
+            content.trim() || images.length
+              ? "bg-blue-600 text-white hover:bg-blue-700"
+              : "bg-gray-600 text-gray-400 cursor-not-allowed"
           }`}
         >
           <Send className="w-5 h-5" />

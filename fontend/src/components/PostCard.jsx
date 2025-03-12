@@ -11,14 +11,15 @@ const PostCard = ({ post }) => {
   };
 
   return (
-    <div className="bg-gray-800 text-white shadow-lg rounded-2xl p-4 w-full ">
-      <div className="flex items-center gap-3 mb-2">
+    <div className="bg-gray-800 text-white shadow-lg rounded-lg  w-3/4">
+      <div className="flex items-center mb-2 pt-4 pl-4">
         <img
-          src={post.createdBy.avatar || "https://via.placeholder.com/40"}
+          src={post.createdBy.avatar || ""}
           alt="Avatar"
           className="w-10 h-10 rounded-full"
         />
-        <div>
+        <div className="ml-2">
+          <h2>{"Thien Hoa"}</h2>
           <h3 className="font-semibold">{post.createdBy.name}</h3>
           <p className="text-sm text-gray-400">
             {new Date(post.createdAt).toLocaleString()}
@@ -26,17 +27,36 @@ const PostCard = ({ post }) => {
         </div>
       </div>
 
-      <p className="text-gray-200 mb-3">{post.content}</p>
+      <p className="text-gray-200 mb-3 pl-4">{post.content}</p>
 
-      {post.image && (
-        <img
-          src={post.image}
-          alt="Post"
-          className="rounded-xl w-full object-cover mb-3"
-        />
+      {post.images && post.images.length === 3 && (
+        <div className="grid grid-cols-2 gap-2">
+          {/* Cột 1: Ảnh lớn */}
+          <img
+            src={post.images[0]}
+            alt="Main Image"
+            className="w-full h-full object-cover "
+          />
+
+          {/* Cột 2: Hai ảnh nhỏ */}
+          <div className="grid gap-2">
+            <img
+              src={post.images[1]}
+              alt="Sub Image 1"
+              className="w-full h-full object-cover "
+            />
+            <img
+              src={post.images[2]}
+              alt="Sub Image 2"
+              className="w-full h-full object-cover "
+            />
+          </div>
+        </div>
       )}
 
-      <div className="flex items-center justify-between text-gray-400">
+
+
+      <div className="flex items-center justify-between text-gray-400 p-3">
         <button onClick={toggleLike} className="flex items-center gap-1">
           <Heart
             className={`w-5 h-5 ${liked ? "text-red-500 fill-red-500" : "text-gray-400"}`}

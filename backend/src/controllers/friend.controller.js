@@ -7,18 +7,18 @@ export const sendRequest = async(req, res) => {
     console.log(idReceiver)
     const receiver = await User.findById(idReceiver);
     if(!receiver) {
-        return res.status(500).json({ msg: "Receiver is not exists" });
+        return res.status(400).json({ msg: "Receiver is not exists" });
     }
     
     if(idReceiver == sender._id){
-        return res.status(500).json({ msg: "Cannot send to yourself" });
+        return res.status(400).json({ msg: "Cannot send to yourself" });
     }
 
     if(sender.requestFriend.includes(receiver._id)) {
-        return res.status(500).json({ msg: "You sent requset before" });
+        return res.status(400).json({ msg: "You sent requset before" });
     }
     if(sender.friends.includes(receiver._id)) {
-        return res.status(500).json({ msg: "This user is your Friend" });
+        return res.status(400).json({ msg: "This user is your Friend" });
     }
     sender.requestFriend.push(receiver._id);
     sender.save();

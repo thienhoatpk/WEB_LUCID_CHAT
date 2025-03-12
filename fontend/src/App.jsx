@@ -54,23 +54,23 @@ const App = () => {
   return (
     <div data-theme={theme}>
       <div className="flex">
-    {/* Navbar dọc bên trái */}
-    <Navbar />
+        {/* Navbar dọc bên trái */}
+        <Navbar />
 
-    {/* Nội dung chính */}
-    <div className="flex-1 ml-[84px] h-full ">
-      <Routes className="h-full">
-      <Route path="/" element={authUser ? <NewsFeedPage /> : <Navigate to="/login" />} /> 
-        <Route path="/newsfeeds" element={authUser ? <NewsFeedPage /> : <Navigate to="/login" />} /> 
-        <Route path="/messages" element={authUser ? <ChatPage /> : <Navigate to="/login" />} />
-        <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/" />} />
-        <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/" />} />
-        <Route path="/settings" element={<SettingPage />} />
-        <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
-        <Route path="/friends" element={authUser ? <FriendPage /> : <Navigate to="/login" />} />
-      </Routes>
-    </div>
-  </div>
+        {/* Nội dung chính */}
+        <div className="flex-1 ml-[84px] h-full ">
+          <Routes className="h-full">
+            <Route path="/" element={authUser ? <NewsFeedPage /> : <Navigate to="/login" />} />
+            <Route path="/newsfeeds" element={authUser ? <NewsFeedPage /> : <Navigate to="/login" />} />
+            <Route path="/messages" element={authUser ? <ChatPage /> : <Navigate to="/login" />} />
+            <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/" />} />
+            <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/" />} />
+            <Route path="/settings" element={<SettingPage />} />
+            <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
+            <Route path="/friends" element={authUser ? <FriendPage /> : <Navigate to="/login" />} />
+          </Routes>
+        </div>
+      </div>
       {/* Hiển thị thông báo */}
       <div className="fixed bottom-5 right-5 space-y-2">
         {notifications.map((notify) => (

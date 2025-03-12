@@ -13,7 +13,7 @@ router.get("/get-requests", protectRoute, getRequests);
 router.get("/get-invitates", protectRoute, getInvitates);
 
 router.post("/remove-friend", protectRoute, removeFriend);
-
+1
 router.post("/cancle-request", protectRoute, cancleRequest);
 
 router.post("/accept-friend", protectRoute, acceptFriend);
