@@ -115,12 +115,16 @@ export const cancleRequest = async(req, res) => {
     try {
         const myUser = req.user;
         const { idCancle } = req.body;
+        console.log(idCancle)
         if(!myUser.requestFriend.includes(idCancle)){
             return res.status(500).json({ msg: "You don't send this user" });
         }
         else{
-            myUser.requestFriend    .pull(idCancle);
-            myUser.save();
+            const userCancle = await User.findById(idCancle);
+            await myUser.requestFriend.pull(idCancle);
+            await userCancle.invitateFriend.pull(myUser._id);
+            await userCancle.save();
+            await myUser.save();
             return res.status(201).json({ msg: "Cancled ID: "+idCancle});
         }  
     } catch (error) {
@@ -154,5 +158,41 @@ export const acceptFriend = async(req, res) => {
         res.status(201).json({msg: "Accepted id: "+idAccept, user: sender})
     } catch (error) {
         return res.status(500).json({ msg: "Accepted Fail" });
+    }
+
+
+};
+export const search = async (req, res) => {
+    try {
+        const { email } = req.params;
+        
+        if (!email) {
+            return res.status(400).json({ message: "Email is required" });
+        }
+
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        const requesterId = req.user._id; 
+        console.log(requesterId)
+        let type = "stranger"; 
+
+        if (user.friends.includes(requesterId)) {
+            type = "Friend";
+        } else if (user.requestFriend.includes(requesterId)) {
+            type = "sent_request";
+        } else if (user.invitateFriend.includes(requesterId)) {
+            type = "received_request";
+        }
+        if(requesterId==user._id){
+            type = "isme"
+        }
+        console.log(type)
+        res.status(200).json({ ...user.toObject(), type });
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error: error.message });
     }
 };

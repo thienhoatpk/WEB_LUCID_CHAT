@@ -3,38 +3,28 @@ import { Image, Send } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 import { usePostStore } from "../store/usePostStore";
 
-const PostInput = ({ onPost }) => {
+const PostInput = () => {
   const { createPost } = usePostStore();
-  const [content, setContent] = useState(""); // Lưu nội dung nhập
+  const [content, setContent] = useState(""); 
   const [images, setImages] = useState([]);
   const { authUser } = useAuthStore();
 
-  // Xử lý đăng bài
   const handlePost = () => {
-    console.log(content)
-    console.log(images)
     if (!content.trim() && images.length === 0) return;
-
-    onPost({
-      id: Date.now(),
-      content,
-      images,
-      likesCount: 0,
-      comments: [],
-      createdBy: { name: authUser.fullName, avatar: authUser.profilePic },
-      createdAt: new Date().toISOString(),
-    });
+    const data ={
+      "content": content,
+      "images": images
+    }
+    createPost(data);
 
     setContent(""); 
     setImages([]); 
   };
 
-  // Xử lý thay đổi nội dung
   const handleContentChange = (e) => {
-    setContent(e.target.value); // Cập nhật state ngay khi nhập
+    setContent(e.target.value); 
   };
 
-  // Xử lý thêm ảnh dưới dạng Base64
   const handleImageChange = async (e) => {
     const files = Array.from(e.target.files);
 
@@ -55,7 +45,7 @@ const PostInput = ({ onPost }) => {
 
   return (
     <div className="bg-gray-800 shadow-lg rounded-xl p-5 w-full max-w-2xl mb-6 border border-gray-700">
-      {/* Avatar + Ô nhập */}
+
       <div className="flex items-start gap-4">
         <img
           src={authUser?.profilePic || "/default-avatar.png"}
@@ -64,7 +54,7 @@ const PostInput = ({ onPost }) => {
         />
         <input
           value={content}
-          onChange={handleContentChange} // Cập nhật state ngay khi nhập
+          onChange={handleContentChange} 
           placeholder="Bạn đang nghĩ gì?"
           className="flex-1 focus:outline-none p-4 bg-gray-700 text-white rounded-lg border-b-2 border-gray-600"
           style={{
@@ -77,7 +67,7 @@ const PostInput = ({ onPost }) => {
         />
       </div>
 
-      {/* Hiển thị ảnh */}
+
       {images.length > 0 && (
         <div className="mt-4 flex gap-2 overflow-x-auto">
           {images.map((image, index) => (
@@ -99,7 +89,7 @@ const PostInput = ({ onPost }) => {
         </div>
       )}
 
-      {/* Chức năng thêm ảnh + Đăng bài */}
+
       <div className="flex justify-between mt-4">
         <input
           type="file"

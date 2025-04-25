@@ -6,22 +6,22 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:5173"],
+    origin: "*"
   },
 });
 
-const userSocketMap = {}; // Lưu userId -> socket.id
-const notifications = {}; // Lưu userId -> danh sách thông báo chưa đọc
+const userSocketMap = {}; 
+const notifications = {}; 
 
 export function getReceiverId(userId) {
   return userSocketMap[userId];
 }
 
 io.on("connection", (socket) => {
-  console.log("🔗 New connection:", socket.id);
+  // console.log("🔗 New connection:", socket.id);
   
   const userId = socket.handshake.query.userId;
-  console.log("idUSER "+userId)
+  // console.log("idUSER "+userId)
   if (userId) {
     if (userSocketMap[userId]) {
       console.log(`🔄 Replacing old socket for user: ${userId}`);
@@ -29,7 +29,7 @@ io.on("connection", (socket) => {
     userSocketMap[userId] = socket.id;
    
    
-    console.log(userSocketMap)
+    // console.log(userSocketMap)
 
    
   }

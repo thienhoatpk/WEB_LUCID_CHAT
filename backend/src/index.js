@@ -27,7 +27,8 @@ app.use(upload.none());
 app.use(CookieParser());
 app.use(
     cors({
-        origin: 'http://localhost:5173', // Chỉ cho phép từ frontend
+        // origin: 'http://localhost:5173', // Chỉ cho phép từ frontend
+        origin: '*', 
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Các phương thức được phép
         credentials: true, // Cho phép gửi cookie, nếu cần
     })

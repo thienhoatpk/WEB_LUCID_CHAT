@@ -26,7 +26,7 @@ export const getMessages = async (req, res) => {
           { senderId: myId, receiverId: userToChatId },
           { senderId: userToChatId, receiverId: myId },
         ],
-      });
+      })
   
       res.status(200).json(messages);
     } catch (error) {
@@ -106,4 +106,65 @@ export const revokeMessage = async (req, res) => {
       res.status(500).json({ msg: "Internal Server Error" });
   }
 };
+export const getAllLatestMessages = async (req, res) => {
+    try {
+        const myId = req.user._id;
+        
+        const conversations = await Message.aggregate([
+            {
+                $match: {
+                    $or: [
+                        { senderId: myId },
+                        { receiverId: myId }
+                    ]
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        $cond: [
+                            { $eq: ["$senderId", myId] },
+                            "$receiverId",
+                            "$senderId"
+                        ]
+                    },
+                    lastMessage: { $last: "$$ROOT" }
+                }
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "userInfo"
+                }
+            },
+            {
+                $unwind: "$userInfo"
+            },
+            {
+                $project: {
+                    userId: "$_id",
+                    fullName: "$userInfo.fullName", 
+                    profilePic: "$userInfo.profilePic",
+                    lastMessage: {
+                        _id: "$lastMessage._id",
+                        text: "$lastMessage.text",
+                        image: "$lastMessage.image",
+                        createdAt: "$lastMessage.createdAt",
+                        isRevoked: "$lastMessage.isRevoked"
+                    }
+                }
+            },
+            {
+                $sort: { "lastMessage.createdAt": -1 }
+            }
+        ]);
+  
+        res.status(200).json(conversations);
+        } catch (error) {
+            console.log("Error in getAllLatestMessages controller: ", error.message);
+            res.status(500).json({ error: "Internal server error" });
+        }
+    };
 

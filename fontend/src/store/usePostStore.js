@@ -12,11 +12,13 @@ export const usePostStore = create((set, get) => ({
   createPost: async (data) => {
     set({ isLoading: true });
     try {
+      clg(data)
 
-      // const res = await axiosInstance.post(`/post/create-post`);
-      // if(res.status==200){
-        
-      // }
+      const res = await axiosInstance.post(`/post/create-post`, data);
+      if(res.status==201){
+        set({ posts: [res.data.post, ...posts] });
+      }
+
 
     } catch (error) {
       toast.error(error.response?.data?.message || "Có lỗi xảy ra");

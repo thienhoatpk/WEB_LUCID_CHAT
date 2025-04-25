@@ -53,12 +53,13 @@ export const login = async(req, res) => {
         if (!await bcrypt.compare(password, user.password))
             return res.status(400).json({msg: "Login is fail"}) 
 
-        generateToken(user._id,res);
+        const token = generateToken(user._id,res);
             res.status(200).json({
                 _id: user._id,
                 fullName: user.fullName,
                 email: user.email,
                 profilePic: user.profilePic,
+                token
             });
 
     } catch (error) {
@@ -83,9 +84,10 @@ export const logout = (req, res) => {
 export const updateProfile = async(req, res) => {
     try {
         const {profilePic} = req.body;
+        console.log(profilePic)
         const useId = req.user._id;
         if (!profilePic){
-            return res.status(400).json({msg: "ProfilePic is required"})
+            return res.status(400).json({msg: "ProfilePic is required"})           
         }
 
         const uploadRes = await cloudinary.uploader.upload(profilePic)

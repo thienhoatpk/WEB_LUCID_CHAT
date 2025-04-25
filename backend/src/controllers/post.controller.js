@@ -2,6 +2,7 @@ import Post from "../models/post.model.js"
 
 export const createPost = async (req, res) => {
     try {
+        console.log("oke")
         const { content, images } = req.body; 
         const imageArray = Array.isArray(images) ? images : [images];
         const newPost = new Post({
@@ -27,7 +28,7 @@ export const getPosts = async(req, res) => {
         const skip = (page - 1) * limit;
 
         const posts = await Post.find()
-            .populate("createdBy", "username")
+            .populate("createdBy", "fullName profilePic")
             .sort({ createdAt: -1 }) // Mới nhất trước
             .skip(skip)
             .limit(limit);
